@@ -1,0 +1,16 @@
+{
+  "name": "the-nature-of-code-book",
+  "version": "1.0.0",
+  "description": "Learning projects from The Nature of Code",
+  "private": true,
+  "scripts": {
+    "serve": "live-server",
+    "walker": "live-server chapter_0_randomness/walker",
+    "random-number-distribution": "live-server chapter_0_randomness/random-number-distribution",
+    "coin-flip": "live-server chapter_0_randomness/coin-flip"
+  },
+  "devDependencies": {
+    "@types/p5": "^1.7.6",
+    "live-server": "^1.2.2"
+  }
+}

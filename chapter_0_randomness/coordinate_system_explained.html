@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinate System Explained</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .comparison {
+            display: flex;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        .system {
+            text-align: center;
+        }
+        canvas {
+            border: 2px solid #333;
+            display: block;
+            margin: 20px auto;
+        }
+        h2 {
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .note {
+            background: #ffffcc;
+            padding: 15px;
+            border-left: 4px solid #ffcc00;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+        .arrow {
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Why does y++ move DOWN in p5.js?</h1>
+
+        <div class="comparison">
+            <div class="system">
+                <h2>Traditional Math (Cartesian)</h2>
+                <canvas id="math" width="300" height="300"></canvas>
+                <p>Origin (0,0) at <strong>bottom-left</strong></p>
+                <p>y++ moves <span class="arrow">↑</span> UP</p>
+            </div>
+
+            <div class="system">
+                <h2>Computer Graphics (p5.js)</h2>
+                <canvas id="graphics" width="300" height="300"></canvas>
+                <p>Origin (0,0) at <strong>top-left</strong></p>
+                <p style="color: #cc0000; font-weight: bold;">y++ moves <span class="arrow">↓</span> DOWN</p>
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>Why?</strong> Computer graphics systems use top-left origin because:
+            <ul>
+                <li>Matches how we read (left to right, top to bottom)</li>
+                <li>Matches how monitors draw pixels (top to bottom scan lines)</li>
+                <li>Historical convention from early CRT displays</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Draw Traditional Math Coordinate System
+        const mathCanvas = document.getElementById('math');
+        const mathCtx = mathCanvas.getContext('2d');
+
+        mathCtx.fillStyle = '#f9f9f9';
+        mathCtx.fillRect(0, 0, 300, 300);
+
+        // Transform to have origin at bottom-left
+        mathCtx.translate(0, 300);
+        mathCtx.scale(1, -1);
+
+        // Draw grid
+        mathCtx.strokeStyle = '#ddd';
+        mathCtx.lineWidth = 1;
+        for (let i = 0; i <= 300; i += 30) {
+            mathCtx.beginPath();
+            mathCtx.moveTo(i, 0);
+            mathCtx.lineTo(i, 300);
+            mathCtx.stroke();
+            mathCtx.beginPath();
+            mathCtx.moveTo(0, i);
+            mathCtx.lineTo(300, i);
+            mathCtx.stroke();
+        }
+
+        // Draw axes
+        mathCtx.strokeStyle = '#000';
+        mathCtx.lineWidth = 2;
+        mathCtx.beginPath();
+        mathCtx.moveTo(50, 0);
+        mathCtx.lineTo(50, 300);
+        mathCtx.stroke();
+        mathCtx.beginPath();
+        mathCtx.moveTo(0, 50);
+        mathCtx.lineTo(300, 50);
+        mathCtx.stroke();
+
+        // Draw origin point
+        mathCtx.fillStyle = '#ff0000';
+        mathCtx.beginPath();
+        mathCtx.arc(50, 50, 5, 0, Math.PI * 2);
+        mathCtx.fill();
+
+        // Draw Y arrow (pointing up)
+        mathCtx.strokeStyle = '#0066cc';
+        mathCtx.lineWidth = 3;
+        mathCtx.beginPath();
+        mathCtx.moveTo(50, 50);
+        mathCtx.lineTo(50, 200);
+        mathCtx.stroke();
+
+        // Arrow head (up)
+        mathCtx.fillStyle = '#0066cc';
+        mathCtx.beginPath();
+        mathCtx.moveTo(50, 200);
+        mathCtx.lineTo(45, 190);
+        mathCtx.lineTo(55, 190);
+        mathCtx.fill();
+
+        // Draw X arrow (pointing right)
+        mathCtx.strokeStyle = '#00cc66';
+        mathCtx.lineWidth = 3;
+        mathCtx.beginPath();
+        mathCtx.moveTo(50, 50);
+        mathCtx.lineTo(200, 50);
+        mathCtx.stroke();
+
+        // Arrow head (right)
+        mathCtx.fillStyle = '#00cc66';
+        mathCtx.beginPath();
+        mathCtx.moveTo(200, 50);
+        mathCtx.lineTo(190, 45);
+        mathCtx.lineTo(190, 55);
+        mathCtx.fill();
+
+        // Labels (need to flip text back)
+        mathCtx.setTransform(1, 0, 0, 1, 0, 0);
+        mathCtx.fillStyle = '#000';
+        mathCtx.font = 'bold 14px Arial';
+        mathCtx.fillText('(0,0)', 55, 295);
+        mathCtx.fillStyle = '#0066cc';
+        mathCtx.fillText('y++', 55, 90);
+        mathCtx.fillText('↑', 60, 110);
+        mathCtx.fillStyle = '#00cc66';
+        mathCtx.fillText('x++', 160, 295);
+        mathCtx.fillText('→', 180, 295);
+
+        // Draw Computer Graphics Coordinate System
+        const graphicsCanvas = document.getElementById('graphics');
+        const gfxCtx = graphicsCanvas.getContext('2d');
+
+        gfxCtx.fillStyle = '#f9f9f9';
+        gfxCtx.fillRect(0, 0, 300, 300);
+
+        // Draw grid
+        gfxCtx.strokeStyle = '#ddd';
+        gfxCtx.lineWidth = 1;
+        for (let i = 0; i <= 300; i += 30) {
+            gfxCtx.beginPath();
+            gfxCtx.moveTo(i, 0);
+            gfxCtx.lineTo(i, 300);
+            gfxCtx.stroke();
+            gfxCtx.beginPath();
+            gfxCtx.moveTo(0, i);
+            gfxCtx.lineTo(300, i);
+            gfxCtx.stroke();
+        }
+
+        // Draw axes
+        gfxCtx.strokeStyle = '#000';
+        gfxCtx.lineWidth = 2;
+        gfxCtx.beginPath();
+        gfxCtx.moveTo(50, 0);
+        gfxCtx.lineTo(50, 300);
+        gfxCtx.stroke();
+        gfxCtx.beginPath();
+        gfxCtx.moveTo(0, 50);
+        gfxCtx.lineTo(300, 50);
+        gfxCtx.stroke();
+
+        // Draw origin point
+        gfxCtx.fillStyle = '#ff0000';
+        gfxCtx.beginPath();
+        gfxCtx.arc(50, 50, 5, 0, Math.PI * 2);
+        gfxCtx.fill();
+
+        // Draw Y arrow (pointing DOWN!)
+        gfxCtx.strokeStyle = '#cc0066';
+        gfxCtx.lineWidth = 3;
+        gfxCtx.beginPath();
+        gfxCtx.moveTo(50, 50);
+        gfxCtx.lineTo(50, 200);
+        gfxCtx.stroke();
+
+        // Arrow head (down)
+        gfxCtx.fillStyle = '#cc0066';
+        gfxCtx.beginPath();
+        gfxCtx.moveTo(50, 200);
+        gfxCtx.lineTo(45, 190);
+        gfxCtx.lineTo(55, 190);
+        gfxCtx.fill();
+
+        // Draw X arrow (pointing right)
+        gfxCtx.strokeStyle = '#00cc66';
+        gfxCtx.lineWidth = 3;
+        gfxCtx.beginPath();
+        gfxCtx.moveTo(50, 50);
+        gfxCtx.lineTo(200, 50);
+        gfxCtx.stroke();
+
+        // Arrow head (right)
+        gfxCtx.fillStyle = '#00cc66';
+        gfxCtx.beginPath();
+        gfxCtx.moveTo(200, 50);
+        gfxCtx.lineTo(190, 45);
+        gfxCtx.lineTo(190, 55);
+        gfxCtx.fill();
+
+        // Labels
+        gfxCtx.fillStyle = '#000';
+        gfxCtx.font = 'bold 14px Arial';
+        gfxCtx.fillText('(0,0)', 55, 45);
+        gfxCtx.fillStyle = '#cc0066';
+        gfxCtx.font = 'bold 16px Arial';
+        gfxCtx.fillText('y++', 55, 130);
+        gfxCtx.fillText('↓', 60, 150);
+        gfxCtx.fillStyle = '#00cc66';
+        gfxCtx.fillText('x++', 140, 45);
+        gfxCtx.fillText('→', 160, 45);
+    </script>
+</body>
+</html>
