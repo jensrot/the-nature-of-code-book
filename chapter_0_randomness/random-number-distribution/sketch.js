@@ -1,7 +1,7 @@
 let randomCounts = [];
 let randomColors = [];
 
-let total = 40;
+let total = 20;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -14,9 +14,13 @@ function setup() {
 
 function draw() {
     background(200);
-    let index = floor(random(randomCounts.length));
+    // let index = floor(random(randomCounts.length));
+    let index = int(acceptreject() * randomCounts.length);
     randomCounts[index]++;
+
     stroke(0);
+    strokeWeight(2);
+    fill(127);
 
     console.log(randomCounts)
 
@@ -30,4 +34,17 @@ function draw() {
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
+}
+
+// Accept-reject algorithm a type of Monte Carlo method
+// probability is determined by formula y = x
+function acceptreject() {
+    while (true) {
+        let r1 = random(1);
+        let probability = r1;
+        let r2 = random(1);
+        if (r2 < probability) {
+            return r1;
+        }
+    }
 }
